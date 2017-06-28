@@ -5,28 +5,23 @@
 	let messages = {}; // or Object.create(null);
 
 	messages.loadStarterJSON = function() {
-
 		// let messagesURL = 'https://nss-chatterbox-app.firebaseio.com/messages.json';
+		$.ajax({
+			url: 'https://nss-chatterbox-app.firebaseio.com/messages.json'
+		})
+		.done(dataHandler)
+		.fail(errorHandler);
+		
+		function errorHandler(error) {
+			console.log("An error occured while transfering data", error.statusText);
+		}
 
-		// for (var i = 0; i < messageFilesArray.length ; i++) {
-			let messageRequest = new XMLHttpRequest();
-			function messageXHRErrorHandler() {
-				console.log("An error occured while transfering data");
-			}
-
-			function messageXHRLoadHandler() {
-				let data = JSON.parse(event.target.responseText);
-				console.log("data", data);
-				data.forEach(function(message) {
-					Chatty.messages.createMessage(message, message.name);
-				});
-
-			}
-			messageRequest.addEventListener("load", messageXHRLoadHandler);
-			messageRequest.addEventListener("error", messageXHRErrorHandler);
-			messageRequest.open("GET", 'https://nss-chatterbox-app.firebaseio.com/messages.json');
-			messageRequest.send();
-		// }
+		function dataHandler(data) {
+			console.log("data", data);
+			data.forEach(function(message) {
+				Chatty.messages.createMessage(message, message.name);
+			});
+		}
 	}
 
 	messages.createMessage = function(message, activeUser)
